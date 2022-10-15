@@ -24,9 +24,6 @@ module.exports = function makeGopherFetch(opts = {}){
         if(signal){
           signal.addEventListener('abort', takeCareOfIt)
         }
-
-        const mainReq = !reqHeaders.accept || !reqHeaders.accept.includes('application/json')
-        const mainRes = mainReq ? 'text/html; charset=utf-8' : 'application/json; charset=utf-8'
     
         try {
           const gopherReq = new URL(url)
@@ -47,9 +44,9 @@ module.exports = function makeGopherFetch(opts = {}){
               });
             })
             
-            return sendTheData(signal, { statusCode: 200, headers: { 'Content-Type': mainRes }, data: mainReq ? [`<html><head><title>${gopherReq.toString()}</title></head><body><div><p>${mainData.text}</p></div></body></html>`] : [JSON.stringify(mainData.text)] })
+            return sendTheData(signal, {statusCode: 200, headers: {'Content-Type': 'text/plain'}, data: [mainData.text]})
         } catch(e){
-          return sendTheData(signal, { statusCode: 500, headers: {'Content-Type': mainRes}, data: mainReq ? [`<html><head><title>${e.name}</title></head><body><div><p>${e.stack}</p></div></body></html>`] : [JSON.stringify(e.stack)]})
+          return sendTheData(signal, {statusCode: 500, headers: {'Content-Type': 'text/plain'}, data: [JSON.stringify(e.stack)]})
         }
     }
     )
