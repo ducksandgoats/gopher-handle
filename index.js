@@ -30,7 +30,13 @@ module.exports = function makeGopherFetch(opts = {}){
     
           if (gopherReq.protocol !== 'gopher:' || !method || method !== 'GET') {
             return sendTheData(signal, { statusCode: 400, headers: { 'Content-Type': 'application/json; charset=utf-8' }, data: [Buffer.from('query is incorrect')] })
-          } else if(!gopherReq.hostname.startsWith('gopher.')){
+          }
+
+          if(gopherReq.hostname === '_'){
+            return sendTheData(signal, { statusCode: 200, headers: { 'Content-Type': 'text/plain; charset=utf-8' }, data: ['works'] })
+          }
+          
+          if(!gopherReq.hostname.startsWith('gopher.')){
             gopherReq.hostname = 'gopher.' + gopherReq.hostname
           }
 
