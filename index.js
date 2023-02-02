@@ -1,7 +1,6 @@
-const makeFetch = require('make-fetch')
-const Gopher = require('gopher-lib')
-
-module.exports = function makeGopherFetch(opts = {}){
+module.exports = async function makeGopherFetch(opts = {}) {
+    const {makeFetch} = await import('make-fetch')
+    const Gopher = require('gopher-lib')
     const DEFAULT_OPTS = {}
     const finalOpts = { ...DEFAULT_OPTS, ...opts }
     // const SUPPORTED_METHODS = ['HEAD', 'GET', 'POST', 'DELETE']
