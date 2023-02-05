@@ -27,11 +27,11 @@ module.exports = async function makeGopherFetch(opts = {}) {
           const gopherReq = new URL(url)
     
           if (gopherReq.protocol !== 'gopher:' || !method || method !== 'GET') {
-            return sendTheData(signal, { statusCode: 400, headers: { 'Content-Type': 'application/json; charset=utf-8' }, data: [Buffer.from('query is incorrect')] })
+            return sendTheData(signal, { status: 400, headers: { 'Content-Type': 'application/json; charset=utf-8' }, body: [Buffer.from('query is incorrect')] })
           }
 
           if(gopherReq.hostname === '_'){
-            return sendTheData(signal, { statusCode: 200, headers: { 'Content-Type': 'text/plain; charset=utf-8' }, data: ['works'] })
+            return sendTheData(signal, { status: 200, headers: { 'Content-Type': 'text/plain; charset=utf-8' }, body: ['works'] })
           }
           
           if(!gopherReq.hostname.startsWith('gopher.')){
@@ -48,7 +48,7 @@ module.exports = async function makeGopherFetch(opts = {}) {
               });
             })
             
-            return sendTheData(signal, {statusCode: 200, headers: {'Content-Type': 'text/plain'}, data: [mainData.text]})
+            return sendTheData(signal, {status: 200, headers: {'Content-Type': 'text/plain'}, body: [mainData.text]})
   }
 
   router.any('gopher://*/**', handleGopher)
