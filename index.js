@@ -1,5 +1,6 @@
 module.exports = async function makeGopherFetch(opts = {}) {
-    const {makeFetch} = await import('make-fetch')
+  const { makeRoutedFetch } = await import('make-fetch')
+  const {fetch, router} = makeRoutedFetch()
     const Gopher = require('gopher-lib')
     const DEFAULT_OPTS = {}
     const finalOpts = { ...DEFAULT_OPTS, ...opts }
@@ -17,14 +18,12 @@ module.exports = async function makeGopherFetch(opts = {}) {
       }
       return theData
     }
-
-    const fetch = makeFetch(async (request) => {
-        const { url, method, headers: reqHeaders, body, signal } = request
-        if(signal){
-          signal.addEventListener('abort', takeCareOfIt)
-        }
-    
-        try {
+  
+  async function handleGopher(request) {
+      const { url, method, headers: reqHeaders, body, signal } = request
+      if(signal){
+        signal.addEventListener('abort', takeCareOfIt)
+    }
           const gopherReq = new URL(url)
     
           if (gopherReq.protocol !== 'gopher:' || !method || method !== 'GET') {
@@ -50,11 +49,9 @@ module.exports = async function makeGopherFetch(opts = {}) {
             })
             
             return sendTheData(signal, {statusCode: 200, headers: {'Content-Type': 'text/plain'}, data: [mainData.text]})
-        } catch(e){
-          return sendTheData(signal, {statusCode: 500, headers: {'Content-Type': 'text/plain'}, data: [JSON.stringify(e.stack)]})
-        }
-    }
-    )
+  }
+
+  router.any('gopher://*/**', handleGopher)
 
     return fetch
 }
