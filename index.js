@@ -37,15 +37,19 @@ module.exports = async function makeGopherFetch(opts = {}) {
     }
 
   router.get('gopher://*/**', async function (request) {
-      const { url, method, headers: reqHeaders, body, signal } = request
+      const { url, method, headers: reqHeaders, body, signal, referrer } = request
       if(signal){
         signal.addEventListener('abort', takeCareOfIt)
     }
-          const gopherReq = new URL(url)
+          const gopherReq = new URL(url, referrer)
 
           if(gopherReq.hostname === '_'){
             return sendTheData(signal, { status: 200, headers: { 'Content-Type': 'text/plain; charset=utf-8' }, body: ['works'] })
-          }
+    }
+    
+      if (!gopherReq.hostname.startsWith('gopher.')) {
+        gopherReq.hostname = 'gopher.' + gopherReq.hostname
+      }
 
           const mainData = await new Promise((resolve, reject) => {
             gopher.get(gopherReq.href, (err, reply)=>{
