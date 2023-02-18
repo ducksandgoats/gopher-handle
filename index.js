@@ -61,7 +61,7 @@ module.exports = async function makeGopherFetch(opts = {}) {
               });
             })
             
-            return sendTheData(signal, {status: 200, headers: {'Content-Type': 'text/plain'}, body: mainData.text})
+            return sendTheData(signal, {status: 200, headers: {'Content-Type': 'text/plain'}, body: mainData.text ? mainData.text : ''})
   })
 
     return fetch
